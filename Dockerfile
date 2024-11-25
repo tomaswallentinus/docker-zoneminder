@@ -55,14 +55,12 @@ RUN CODENAME=$(lsb_release -cs) && \
     echo "Using ZoneMinder repository: $BASE_URL" && \
     wget -q $BASE_URL/Packages.xz -O Packages.xz && \
     unxz Packages.xz && \
-    LATEST_ZONEMINDER=$(grep -A 1 "Package: zoneminder" Packages | grep "Filename" | awk '{print $2}' | tail -n 1) && \
-    LATEST_DOC=$(grep -A 1 "Package: zoneminder-doc" Packages | grep "Filename" | awk '{print $2}' | tail -n 1) && \
+    LATEST_ZONEMINDER=$(grep -A 10 -m 1 "Package: zoneminder$" Packages | grep "Filename:" | awk '{print $2}') && \
     echo "Latest ZoneMinder package: $LATEST_ZONEMINDER" && \
-    echo "Latest ZoneMinder Doc package: $LATEST_DOC" && \
     wget $BASE_URL/$LATEST_ZONEMINDER && \
-    wget $BASE_URL/$LATEST_DOC && \
-    dpkg -i $LATEST_ZONEMINDER $LATEST_DOC || apt-get -f install --yes && \
-    rm Packages $LATEST_ZONEMINDER $LATEST_DOC
+    dpkg -i $(basename $LATEST_ZONEMINDER) || apt-get -f install --yes && \
+    rm Packages $(basename $LATEST_ZONEMINDER)
+
 
 # Install Perl WebSocket module
 RUN /usr/bin/cpanm -i 'Net::WebSocket::Server'
