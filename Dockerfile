@@ -43,7 +43,6 @@ RUN set -x && apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install ZoneMinder with fallback logic
 # Install ZoneMinder with trusted repository and fallback
 RUN set -x && \
     apt-get update && \
