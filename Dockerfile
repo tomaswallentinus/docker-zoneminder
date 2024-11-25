@@ -52,12 +52,13 @@ RUN set -x && \
         gnupg2 && \
     wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/zoneminder-archive-keyring.gpg && \
     CODENAME=$(lsb_release -cs) && \
-    echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg trusted=yes] https://zmrepo.zoneminder.com/debian/master/$CODENAME /" > /etc/apt/sources.list.d/zoneminder.list && \
-    if ! apt-get update; then \
+    if [ "$CODENAME" = "bookworm" ]; then \
+        echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg trusted=yes] https://zmrepo.zoneminder.com/debian/master/bookworm /" > /etc/apt/sources.list.d/zoneminder.list; \
+    else \
         echo "Fallback to bullseye"; \
         echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg trusted=yes] https://zmrepo.zoneminder.com/debian/master/bullseye /" > /etc/apt/sources.list.d/zoneminder.list; \
-        apt-get update; \
     fi && \
+    apt-get update && \
     apt-get install --yes zoneminder && \
     pip install --break-system-packages pyzm && \
     apt-get clean && \
