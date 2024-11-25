@@ -40,7 +40,7 @@ RUN set -x && apt-get update && \
         s6 \
         wget \
         tzdata && \
-    wget -O - https://zoneminder.com/debian/zoneminder-archive-key.asc | gpg --dearmor > /usr/share/keyrings/zoneminder-archive-keyring.gpg && \
+    wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor > /usr/share/keyrings/zoneminder-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] http://zmrepo.zoneminder.com/debian $(lsb_release -cs) master" > /etc/apt/sources.list.d/zoneminder.list && \
     apt-get update && \
     apt-get install --yes zoneminder && \
