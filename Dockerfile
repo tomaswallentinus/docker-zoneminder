@@ -46,24 +46,23 @@ RUN set -x && apt-get update && \
 # Add ZoneMinder's GPG key
 RUN wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/zoneminder-archive-keyring.gpg
 
-# Set the distribution codename and fetch the latest packages from the Release file
+# Set the distribution codename and fetch the latest packages from the Packages file
 RUN CODENAME=$(lsb_release -cs) && \
     if [ "$CODENAME" != "bookworm" ] && [ "$CODENAME" != "bullseye" ]; then \
         CODENAME="bullseye"; \
     fi && \
     BASE_URL="https://zmrepo.zoneminder.com/debian/master/$CODENAME" && \
     echo "Using ZoneMinder repository: $BASE_URL" && \
-    wget -q $BASE_URL/Release -O Release && \
-    LATEST_ZONEMINDER=$(grep -oP '(?<=Package: zoneminder_).*?\.deb' Release | tail -n 1) && \
-    LATEST_DOC=$(grep -oP '(?<=Package: zoneminder-doc_).*?\.deb' Release | tail -n 1) && \
+    wget -q $BASE_URL/Packages.xz -O Packages.xz && \
+    unxz Packages.xz && \
+    LATEST_ZONEMINDER=$(grep -A 1 "Package: zoneminder" Packages | grep "Filename" | awk '{print $2}' | tail -n 1) && \
+    LATEST_DOC=$(grep -A 1 "Package: zoneminder-doc" Packages | grep "Filename" | awk '{print $2}' | tail -n 1) && \
     echo "Latest ZoneMinder package: $LATEST_ZONEMINDER" && \
     echo "Latest ZoneMinder Doc package: $LATEST_DOC" && \
     wget $BASE_URL/$LATEST_ZONEMINDER && \
     wget $BASE_URL/$LATEST_DOC && \
     dpkg -i $LATEST_ZONEMINDER $LATEST_DOC || apt-get -f install --yes && \
-    rm Release $LATEST_ZONEMINDER $LATEST_DOC
-
-    
+    rm Packages $LATEST_ZONEMINDER $LATEST_DOC
 
 # Install Perl WebSocket module
 RUN /usr/bin/cpanm -i 'Net::WebSocket::Server'
