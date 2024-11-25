@@ -6,7 +6,7 @@ ENV ZM_DB_HOST=mariadb
 ENV ZM_DB_NAME=zm
 ENV ZM_DB_USER=zmuser
 ENV ZM_DB_PASS=zmpass
-ENV TZ=America/New_York
+ENV TZ=Europe/Stockholm
 
 # Set ARG for non-interactive installations
 ARG DEBIAN_FRONTEND=noninteractive
