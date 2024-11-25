@@ -46,7 +46,7 @@ RUN set -x && apt-get update && \
 # Add ZoneMinder's GPG key
 RUN wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/zoneminder-archive-keyring.gpg
 
-# Fetch the latest ZoneMinder package from the Packages file
+# Fetch the latest ZoneMinder package for amd64 from the Packages file
 RUN CODENAME=$(lsb_release -cs) && \
     if [ "$CODENAME" != "bookworm" ] && [ "$CODENAME" != "bullseye" ]; then \
         CODENAME="bullseye"; \
@@ -55,7 +55,7 @@ RUN CODENAME=$(lsb_release -cs) && \
     echo "Using ZoneMinder repository: $BASE_URL" && \
     wget -q $BASE_URL/Packages.xz -O Packages.xz && \
     unxz Packages.xz && \
-    LATEST_ZONEMINDER=$(grep -A 10 -m 1 "Package: zoneminder$" Packages | grep "Filename:" | awk '{print $2}') && \
+    LATEST_ZONEMINDER=$(grep -A 10 -m 1 "Package: zoneminder$" Packages | grep -A 10 "Architecture: amd64" | grep "Filename:" | awk '{print $2}') && \
     echo "Latest ZoneMinder package: $LATEST_ZONEMINDER" && \
     wget https://zmrepo.zoneminder.com/debian/master/$LATEST_ZONEMINDER -O zoneminder.deb && \
     dpkg -i zoneminder.deb || apt-get -f install --yes && \
