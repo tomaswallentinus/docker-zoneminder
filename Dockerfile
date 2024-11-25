@@ -12,45 +12,45 @@ ENV TZ=Europe/Stockholm
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies and ZoneMinder
-RUN apt-get update \
-    && apt-get upgrade --yes \
-    && apt-get install --yes \
-         apache2 \
-         build-essential \
-         cpanminus \
-         ffmpeg \
-         gifsicle \
-         git \
-         gnupg2 \
-         libapache2-mod-php \
-         libconfig-inifiles-perl \
-         libcrypt-mysql-perl \
-         libcrypt-eksblowfish-perl \
-         libmodule-build-perl \
-         libyaml-perl \
-         libjson-perl \
-         liblwp-protocol-https-perl \
-         libgeos-dev \
-         lsb-release \
-         mariadb-client \
-         php \
-         php-mysql \
-         python3-pip \
-         python3-requests \
-         python3-opencv \
-         s6 \
-         wget \
-         tzdata \
-    && wget -O - https://zoneminder.com/debian/zoneminder-archive-key.asc | gpg --dearmor > /usr/share/keyrings/zoneminder-archive-keyring.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] http://zmrepo.zoneminder.com/debian $(lsb_release -cs) master" > /etc/apt/sources.list.d/zoneminder.list \
-    && apt-get update \
-    && apt-get install --yes zoneminder \
-    && pip install --break-system-packages pyzm \
-    && apt-get clean \
-    && a2enmod rewrite \
-    && a2enmod cgi \
-    && a2enmod headers \
-    && a2enmod expires
+RUN apt-get update && \
+    apt-get install --yes \
+        apache2 \
+        build-essential \
+        cpanminus \
+        ffmpeg \
+        gifsicle \
+        git \
+        gnupg2 \
+        libapache2-mod-php \
+        libconfig-inifiles-perl \
+        libcrypt-mysql-perl \
+        libcrypt-eksblowfish-perl \
+        libmodule-build-perl \
+        libyaml-perl \
+        libjson-perl \
+        liblwp-protocol-https-perl \
+        libgeos-dev \
+        lsb-release \
+        mariadb-client \
+        php \
+        php-mysql \
+        python3-pip \
+        python3-requests \
+        python3-opencv \
+        s6 \
+        wget \
+        tzdata && \
+    wget -O - https://zoneminder.com/debian/zoneminder-archive-key.asc | gpg --dearmor > /usr/share/keyrings/zoneminder-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] http://zmrepo.zoneminder.com/debian $(lsb_release -cs) master" > /etc/apt/sources.list.d/zoneminder.list && \
+    apt-get update && \
+    apt-get install --yes zoneminder && \
+    pip install --break-system-packages pyzm && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    a2enmod rewrite && \
+    a2enmod cgi && \
+    a2enmod headers && \
+    a2enmod expires
 
 # Install Perl WebSocket module
 RUN /usr/bin/cpanm -i 'Net::WebSocket::Server'
