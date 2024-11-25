@@ -43,30 +43,27 @@ RUN set -x && apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install ZoneMinder with trusted repository and fallback
-RUN set -x && \
-    apt-get update && \
-    apt-get install --yes \
-        lsb-release \
-        wget \
-        gnupg2 && \
-    wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/zoneminder-archive-keyring.gpg && \
-    CODENAME=$(lsb_release -cs) && \
-    if [ "$CODENAME" = "bookworm" ]; then \
-        echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg trusted=yes] https://zmrepo.zoneminder.com/debian/master/bookworm /" > /etc/apt/sources.list.d/zoneminder.list; \
-    else \
-        echo "Fallback to bullseye"; \
-        echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg trusted=yes] https://zmrepo.zoneminder.com/debian/master/bullseye /" > /etc/apt/sources.list.d/zoneminder.list; \
+# Add ZoneMinder's GPG key
+RUN wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/zoneminder-archive-keyring.gpg
+
+# Set the distribution codename and fetch the latest packages from the Release file
+RUN CODENAME=$(lsb_release -cs) && \
+    if [ "$CODENAME" != "bookworm" ] && [ "$CODENAME" != "bullseye" ]; then \
+        CODENAME="bullseye"; \
     fi && \
-    apt-get update && \
-    apt-get install --yes zoneminder && \
-    pip install --break-system-packages pyzm && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    a2enmod rewrite && \
-    a2enmod cgi && \
-    a2enmod headers && \
-    a2enmod expires
+    BASE_URL="https://zmrepo.zoneminder.com/debian/master/$CODENAME" && \
+    echo "Using ZoneMinder repository: $BASE_URL" && \
+    wget -q $BASE_URL/Release -O Release && \
+    LATEST_ZONEMINDER=$(grep -oP '(?<=Package: zoneminder_).*?\.deb' Release | tail -n 1) && \
+    LATEST_DOC=$(grep -oP '(?<=Package: zoneminder-doc_).*?\.deb' Release | tail -n 1) && \
+    echo "Latest ZoneMinder package: $LATEST_ZONEMINDER" && \
+    echo "Latest ZoneMinder Doc package: $LATEST_DOC" && \
+    wget $BASE_URL/$LATEST_ZONEMINDER && \
+    wget $BASE_URL/$LATEST_DOC && \
+    dpkg -i $LATEST_ZONEMINDER $LATEST_DOC || apt-get -f install --yes && \
+    rm Release $LATEST_ZONEMINDER $LATEST_DOC
+
+    
 
 # Install Perl WebSocket module
 RUN /usr/bin/cpanm -i 'Net::WebSocket::Server'
