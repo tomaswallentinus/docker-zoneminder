@@ -1,15 +1,18 @@
 # Base Image
-FROM debian:12.2
+FROM debian:latest
 
+# Environment Variables
 ENV ZM_DB_HOST=mariadb
 ENV ZM_DB_NAME=zm
 ENV ZM_DB_USER=zmuser
 ENV ZM_DB_PASS=zmpass
-# this is just a default
 ENV TZ=America/New_York
 
+# Set ARG for non-interactive installations
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update \
+
+# Install dependencies and ZoneMinder
+RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --yes \
          apache2 \
@@ -37,16 +40,22 @@ RUN apt update \
          python3-opencv \
          s6 \
          wget \
-         zoneminder \
-    && /usr/bin/pip install --break-system-packages pyzm \
+         tzdata \
+    && wget -O - https://zoneminder.com/debian/zoneminder-archive-key.asc | gpg --dearmor > /usr/share/keyrings/zoneminder-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] http://zmrepo.zoneminder.com/debian $(lsb_release -cs) master" > /etc/apt/sources.list.d/zoneminder.list \
+    && apt-get update \
+    && apt-get install --yes zoneminder \
+    && pip install --break-system-packages pyzm \
     && apt-get clean \
     && a2enmod rewrite \
     && a2enmod cgi \
     && a2enmod headers \
     && a2enmod expires
 
+# Install Perl WebSocket module
 RUN /usr/bin/cpanm -i 'Net::WebSocket::Server'
 
+# Copy additional configurations
 COPY ./content/ /tmp/
 
 RUN install -m 0644 -o root -g root /tmp/zm-site.conf /etc/apache2/sites-available/zm-site.conf \
@@ -69,14 +78,17 @@ RUN install -m 0644 -o root -g root /tmp/zm-site.conf /etc/apache2/sites-availab
     && cd /tmp/zmeventnotification/hook && pip -v install --break-system-packages . \
     && rm -Rf /tmp/*
 
+# Define Volumes
 VOLUME /var/cache/zoneminder
 VOLUME /var/log/zm
 
-# Copy entrypoint make it as executable and run it
+# Copy entrypoint script
 COPY entrypoint.sh /opt/
 RUN chmod +x /opt/entrypoint.sh
 
+# Set entrypoint
 ENTRYPOINT [ "/bin/bash", "-c", "source ~/.bashrc && /opt/entrypoint.sh ${@}", "--" ]
 
+# Expose Ports
 EXPOSE 80
 EXPOSE 9000
