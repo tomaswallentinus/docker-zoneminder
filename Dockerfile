@@ -11,7 +11,7 @@ ENV TZ=Europe/Stockholm
 # Set ARG for non-interactive installations
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install dependencies and ZoneMinder
+# Install dependencies
 RUN set -x && apt-get update && \
     apt-get install --yes \
         apache2 \
@@ -40,12 +40,19 @@ RUN set -x && apt-get update && \
         s6 \
         wget \
         tzdata && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install ZoneMinder with fallback logic
+RUN set -x && \
     wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/zoneminder-archive-keyring.gpg && \
     CODENAME=$(lsb_release -cs) && \
-    echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] https://zmrepo.zoneminder.com/debian ${CODENAME:-bullseye} master" > /etc/apt/sources.list.d/zoneminder.list && \
-    apt-get update || (echo "Fallback to bullseye" && \
-    echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] https://zmrepo.zoneminder.com/debian bullseye master" > /etc/apt/sources.list.d/zoneminder.list && \
-    apt-get update && \
+    echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] https://zmrepo.zoneminder.com/debian $CODENAME master" > /etc/apt/sources.list.d/zoneminder.list && \
+    if ! apt-get update; then \
+        echo "Fallback to bullseye"; \
+        echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] https://zmrepo.zoneminder.com/debian bullseye master" > /etc/apt/sources.list.d/zoneminder.list; \
+        apt-get update; \
+    fi && \
     apt-get install --yes zoneminder && \
     pip install --break-system-packages pyzm && \
     apt-get clean && \
