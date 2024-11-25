@@ -40,8 +40,11 @@ RUN set -x && apt-get update && \
         s6 \
         wget \
         tzdata && \
-    wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor > /usr/share/keyrings/zoneminder-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] http://zmrepo.zoneminder.com/debian $(lsb_release -cs) master" > /etc/apt/sources.list.d/zoneminder.list && \
+    wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/zoneminder-archive-keyring.gpg && \
+    CODENAME=$(lsb_release -cs) && \
+    echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] https://zmrepo.zoneminder.com/debian ${CODENAME:-bullseye} master" > /etc/apt/sources.list.d/zoneminder.list && \
+    apt-get update || (echo "Fallback to bullseye" && \
+    echo "deb [signed-by=/usr/share/keyrings/zoneminder-archive-keyring.gpg] https://zmrepo.zoneminder.com/debian bullseye master" > /etc/apt/sources.list.d/zoneminder.list && \
     apt-get update && \
     apt-get install --yes zoneminder && \
     pip install --break-system-packages pyzm && \
