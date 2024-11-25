@@ -12,7 +12,7 @@ ENV TZ=Europe/Stockholm
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies and ZoneMinder
-RUN apt-get update && \
+RUN set -x && apt-get update && \
     apt-get install --yes \
         apache2 \
         build-essential \
