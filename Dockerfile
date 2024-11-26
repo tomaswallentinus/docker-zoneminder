@@ -132,6 +132,11 @@ RUN install -m 0644 -o root -g root /tmp/zm-site.conf /etc/apache2/sites-availab
 VOLUME /var/cache/zoneminder
 VOLUME /var/log/zm
 
+# Create the font directory and download fonts
+RUN mkdir -p /usr/share/zoneminder/www/skins/classic/css/fonts && \
+    wget https://raw.githubusercontent.com/jossef/material-design-icons-iconfont/master/dist/fonts/MaterialIcons-Regular.woff -O /usr/share/zoneminder/www/skins/classic/css/fonts/material-icons.woff && \
+    wget https://raw.githubusercontent.com/jossef/material-design-icons-iconfont/master/dist/fonts/MaterialIcons-Regular.woff2 -O /usr/share/zoneminder/www/skins/classic/css/fonts/material-icons.woff2
+
 # Copy entrypoint script
 COPY entrypoint.sh /opt/
 RUN chmod +x /opt/entrypoint.sh
