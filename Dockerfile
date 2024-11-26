@@ -15,6 +15,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN set -x && apt-get update && \
     apt-get install --yes \
         apache2 \
+        arp-scan \
         build-essential \
         cpanminus \
         ffmpeg \
@@ -22,61 +23,59 @@ RUN set -x && apt-get update && \
         git \
         gnupg2 \
         libapache2-mod-php \
+        libarchive-zip-perl \
+        libclass-std-fast-perl \
         libconfig-inifiles-perl \
         libcrypt-mysql-perl \
         libcrypt-eksblowfish-perl \
-        libmodule-build-perl \
-        libyaml-perl \
-        libjson-perl \
-        liblwp-protocol-https-perl \
+        libcurl4-gnutls-dev \
+        libdata-entropy-perl \
+        libdata-uuid-perl \
+        libdatetime-perl \
+        libdate-manip-perl \
+        libdbd-mysql-perl \
+        libdevice-serialport-perl \
         libgeos-dev \
+        libgsoap-2.8.124 \
+        libimage-info-perl \
+        libio-interface-perl \
+        libio-socket-multicast-perl \
+        libjson-maybexs-perl \
+        libjson-perl \
+        libjwt2 \
+        liblwp-protocol-https-perl \
+        libmime-lite-perl \
+        libmime-tools-perl \
+        libmodule-build-perl \
+        libmosquittopp1 \
+        libnet-sftp-foreign-perl \
+        libnumber-bytes-human-perl \
+        libphp-serialization-perl \
+        libsoap-wsdl-perl \
+        libsys-cpu-perl \
+        libsys-meminfo-perl \
+        libsys-mmap-perl \
+        liburi-encode-perl \
+        libyaml-perl \
         lsb-release \
         mariadb-client \
         php \
+        php-apcu \
+        php-curl \
+        php-gd \
+        php-intl \
         php-mysql \
+        php-xml \
+        policykit-1 \
+        python3-opencv \
         python3-pip \
         python3-requests \
-        python3-opencv \
-        s6 \
-        wget \
-        libgsoap-2.8.124 \
-        libmosquittopp1 \
-        sudo \
-        libcurl4-gnutls-dev \
-        libdatetime-perl \
-        libdate-manip-perl \
-        libmime-lite-perl \
-        libmime-tools-perl \
-        libdbd-mysql-perl \
-        libphp-serialization-perl \
-        libnet-sftp-foreign-perl \
-        libarchive-zip-perl \
-        libdevice-serialport-perl \
-        libimage-info-perl \
-        libio-interface-perl \
-        libjson-maybexs-perl \
-        libsys-mmap-perl \
-        liburi-encode-perl \
-        libclass-std-fast-perl \
-        libsoap-wsdl-perl \
-        libio-socket-multicast-perl \
-        libsys-cpu-perl \
-        libsys-meminfo-perl \
-        libdata-uuid-perl \
-        libnumber-bytes-human-perl \
-        php-gd \
-        php-apcu \
-        php-intl \
-        php-xml \
-        php-curl \
-        policykit-1 \
         rsyslog \
-        zip \
-        arp-scan \
-        libdata-entropy-perl \
-        libvncclient1 \
-        libjwt2
-        tzdata && \
+        s6 \
+        sudo \
+        tzdata \
+        wget \
+        zip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
