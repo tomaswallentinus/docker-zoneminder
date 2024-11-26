@@ -39,9 +39,85 @@ RUN set -x && apt-get update && \
         python3-opencv \
         s6 \
         wget \
+        libgsoap-2.8.124 \
+        libmosquittopp1 \
+        sudo \
+        libcurl4-gnutls-dev \
+        libdatetime-perl \
+        libdate-manip-perl \
+        libmime-lite-perl \
+        libmime-tools-perl \
+        libdbd-mysql-perl \
+        libphp-serialization-perl \
+        libnet-sftp-foreign-perl \
+        libarchive-zip-perl \
+        libdevice-serialport-perl \
+        libimage-info-perl \
+        libio-interface-perl \
+        libjson-maybexs-perl \
+        libsys-mmap-perl \
+        liburi-encode-perl \
+        libclass-std-fast-perl \
+        libsoap-wsdl-perl \
+        libio-socket-multicast-perl \
+        libsys-cpu-perl \
+        libsys-meminfo-perl \
+        libdata-uuid-perl \
+        libnumber-bytes-human-perl \
+        php-gd \
+        php-apcu \
+        php-intl \
+        php-xml \
+        php-curl \
+        policykit-1 \
+        rsyslog \
+        zip \
+        arp-scan \
+        libdata-entropy-perl \
+        libvncclient1 \
+        libjwt2
         tzdata && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+    
+RUN apt-get update && apt-get install --yes \
+    libgsoap-2.8.124 \
+    libmosquittopp1 \
+    sudo \
+    libcurl4-gnutls-dev \
+    libdatetime-perl \
+    libdate-manip-perl \
+    libmime-lite-perl \
+    libmime-tools-perl \
+    libdbd-mysql-perl \
+    libphp-serialization-perl \
+    libnet-sftp-foreign-perl \
+    libarchive-zip-perl \
+    libdevice-serialport-perl \
+    libimage-info-perl \
+    libio-interface-perl \
+    libjson-maybexs-perl \
+    libsys-mmap-perl \
+    liburi-encode-perl \
+    libclass-std-fast-perl \
+    libsoap-wsdl-perl \
+    libio-socket-multicast-perl \
+    libsys-cpu-perl \
+    libsys-meminfo-perl \
+    libdata-uuid-perl \
+    libnumber-bytes-human-perl \
+    php-gd \
+    php-apcu \
+    php-intl \
+    php-xml \
+    php-curl \
+    policykit-1 \
+    rsyslog \
+    zip \
+    arp-scan \
+    libdata-entropy-perl \
+    libvncclient1 \
+    libjwt2
 
 # Add ZoneMinder's GPG key
 RUN wget -O - https://zmrepo.zoneminder.com/debian/archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/zoneminder-archive-keyring.gpg
