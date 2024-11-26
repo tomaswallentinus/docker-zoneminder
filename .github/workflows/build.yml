@@ -20,4 +20,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: tomaswallentinus/docker-zoneminder:latest
+          tags: tegtomasw/zoneminder-latest:latest
