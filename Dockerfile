@@ -12,7 +12,7 @@ ENV TZ=Europe/Stockholm
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
-RUN set -x && apt-get update && \
+RUN apt-get update && \
     apt-get install --yes \
         apache2 \
         arp-scan \
@@ -105,6 +105,8 @@ RUN /usr/bin/cpanm -i 'Net::WebSocket::Server'
 
 # Copy additional configurations
 COPY ./content/ /tmp/
+
+RUN a2enmod rewrite
 
 RUN install -m 0644 -o root -g root /tmp/zm-site.conf /etc/apache2/sites-available/zm-site.conf \
     && install -m 0644 -o www-data -g www-data /tmp/zmcustom.conf /etc/zm/conf.d/zmcustom.conf \
